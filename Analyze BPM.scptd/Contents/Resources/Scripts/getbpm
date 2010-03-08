@@ -1,0 +1,24 @@
+#!/bin/bash
+
+path=$( dirname "$0" )
+cd "$path"
+
+tmp="/tmp/bpm"
+mkdir -p $tmp
+
+while getopts ":i:o:" opt 
+do
+	case $opt in
+		i)
+			infile=$OPTARG
+			;;
+		o)
+			outfile=${tmp}/$(basename $OPTARG)
+			;;
+	esac
+done
+
+/usr/bin/afconvert -f 'WAVE' -d I16@44100 "$infile" "$outfile"
+echo $(./soundstretch "$outfile" -bpm 2>&1 | grep 'Detected BPM rate' | cut -d' ' -f4 )
+
+rm -rf $tmp

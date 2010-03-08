@@ -1,0 +1,29 @@
+#!/bin/bash
+
+DESTINATION_DIR=~/Library/iTunes/Scripts
+SCRIPT_NAME="$(basename $0)" 
+SKIP_FILE="$SCRIPT_NAME.skip"
+
+cd "$(dirname $0)"
+/bin/mkdir -p $DESTINATION_DIR
+
+for file in *
+do
+	if [ "$file" == "$SCRIPT_NAME" ] || [ "$file" == "$SKIP_FILE" ]
+	then
+		continue
+	fi
+	
+	destination="$DESTINATION_DIR/$file"
+	if [ -e "$destination" ]
+	then
+		/bin/rm -rf "$destination"
+	fi
+
+	if [ -e "$SKIP_FILE" ] && [ "$(grep -i "$file" "$SKIP_FILE")" ]
+	then
+		continue
+	else
+		/bin/cp -Rf "$file" "$destination"
+	fi
+done
